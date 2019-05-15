@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -21,10 +21,20 @@ namespace TextEditor
         string filename = "";
         int change = 1;
 
+        //TODO
+        //уберите двойной показ окон диалога. например, в момент, когда в редакторе есть текст, то вызов команды Open приводит к тому, что
+        // дважды появляется окно диалога с запросом на сохранение текущего документа (?..)
 
         private DialogResult Proverka() // Запрос на сохранение изменений в документе
         {
+           
             DialogResult result = DialogResult.Ignore;
+
+            // TODO: в данной проверке необходимо проверять не только на пустоту, 
+            // но и 
+            // - на то, что текст состоит лишь из одного и более пробелов (изучите метод Trim() для строковых данных)
+            // - на то, редактировался текст или не редактировался (изучите соостветствующие св-ва элемента RichTextBox)
+
             if (richTextBox1.Text != "")
             {
                 result = MessageBox.Show(
@@ -53,6 +63,7 @@ namespace TextEditor
         {
             if (change != 0)
             {
+                //TODO учтите также ответ пользователя "Нет"
                 DialogResult result = Proverka();
                 if (result == DialogResult.Yes)
                 {
@@ -65,8 +76,8 @@ namespace TextEditor
             }
         }
 
-
-        private void openToolStripMenuItem_Click(object sender, EventArgs e) // Открытие файла
+        // Открытие файла
+        private void openToolStripMenuItem_Click(object sender, EventArgs e) 
         {
             if (openFileDialog1.ShowDialog() == DialogResult.Cancel)
                 return;
@@ -81,7 +92,8 @@ namespace TextEditor
         }
 
 
-        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e) // Сохранение с созданием нового файла или перезаписью существующего
+        // Сохранение с созданием нового файла или перезаписью существующего
+        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e) 
         {
             if (saveFileDialog1.ShowDialog() == DialogResult.Cancel)
                 return;
@@ -167,6 +179,8 @@ namespace TextEditor
 
         }
 
+        //TODO доработайте - undo|redo не выполняется должным образом, если копировался и вставлялся текст. 
+        // также проверьте, чтобы при форматировании тоже корректно выполнялись команды undo|redo
         private void richTextBox1_TextChanged(object sender, EventArgs e) // Проверка на возможность выполнения действия Undo/Redo
         {
             change = 1;
@@ -220,6 +234,11 @@ namespace TextEditor
 
         private void leftToolStripMenuItem_Click(object sender, EventArgs e) // Изменение выравнивания текста
         {
+            //TODO хорошо, что вы реализовали один обработчик события для идентичных кнопок меню,
+            // НО! это дало мало эффекта. Храните нужное значение HorizontalAlignment.(...) в св-ве Tag для каждой кнопки 
+            // и используйте напрямую эту информацию 
+            //richTextBox1.SelectionAlignment = (HorizontalAlignment)(sender as ToolStripMenuItem).Tag
+
             string btn = (sender as ToolStripMenuItem).Text;
 
             switch (btn)
@@ -236,15 +255,21 @@ namespace TextEditor
             }
         }
 
+        //TODO почистите код от лишних методов
+        /*
+         *по-моему, следующих два метода уже не актуальны?
+         * 
+         * 
         private void rightToolStripMenuItem_Click(object sender, EventArgs e) 
         {
-            leftToolStripMenuItem_Click(sender, e);
+            //leftToolStripMenuItem_Click(sender, e);
         }
 
         private void centerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            leftToolStripMenuItem_Click(sender, e);
+            //leftToolStripMenuItem_Click(sender, e);
         }
+        */
 
         private void toolStripButton1_Click(object sender, EventArgs e) // Изменение стиля текста
         {
@@ -259,6 +284,13 @@ namespace TextEditor
             richTextBox1.SelectionFont = new Font(currentFont.FontFamily, currentFont.Size, newFontStyle);
         }
 
+        //TODO почистите код от лишних методов
+        /*
+         *по-моему, следующие методы также не актуальны?
+         * 
+         * Внимание! Могут возникнуть ошибки компиляции, т.к. удаление этих методов сопряжено с удалением некоторых строк из файла Main_Form.Designer.cs, поэтому могут возни
+         * Надеюсь, разберетесь. (Если не разберетесь - пишите/спрашивайте)
+         * 
         private void toolStripButton2_Click(object sender, EventArgs e)
         {
             toolStripButton1_Click(sender, e); 
@@ -303,6 +335,7 @@ namespace TextEditor
         {
             pasteToolStripMenuItem_Click(sender,e);
         }
+        */
 
         private void richTextBox1_Click(object sender, EventArgs e) // Определение состояния кнопок изменения стиля 
         {
@@ -312,6 +345,11 @@ namespace TextEditor
             if (currentFont.Italic) toolStripButton2.Checked = true; else toolStripButton2.Checked = false;
             if (currentFont.Underline) toolStripButton3.Checked = true; else toolStripButton3.Checked = false;
             if (currentFont.Strikeout) toolStripButton4.Checked = true; else toolStripButton4.Checked = false;
+        }
+
+        private void Main_Form_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
